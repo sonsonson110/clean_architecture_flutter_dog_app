@@ -21,6 +21,6 @@ class RemoteDogsDone extends RemoteDogsState {
   const RemoteDogsDone(List<DogEntity> dogs) : super(dogs: dogs);
 }
 
-class RemoteDogError extends RemoteDogsState {
-  const RemoteDogError(DioError error) : super(error: error);
+class RemoteDogsError extends RemoteDogsState {
+  const RemoteDogsError(DioError error) : super(error: error);
 }

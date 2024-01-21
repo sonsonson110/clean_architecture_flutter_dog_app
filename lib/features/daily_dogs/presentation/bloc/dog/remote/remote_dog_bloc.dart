@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:clean_architecture_dog_app/core/resources/data_state.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/presentation/bloc/dog/remote/remote_dog_event.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/presentation/bloc/dog/remote/remote_dog_state.dart';
@@ -19,7 +21,8 @@ class RemoteDogsBloc extends Bloc<RemoteDogsEvent, RemoteDogsState> {
       emit(RemoteDogsDone(dataState.data!));
     }
     if (dataState is DataFailed && dataState.data!.isNotEmpty) {
-      emit(RemoteDogError(dataState.error!));
+      log(dataState.error!.toString());
+      emit(RemoteDogsError(dataState.error!));
     }
   }
 }

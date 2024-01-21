@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:clean_architecture_dog_app/core/constants/constants.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/data/models/dog.dart';
 import 'package:dio/dio.dart';
@@ -13,7 +15,7 @@ abstract class DogApiService {
   // create a factory method accept dio as a parameter
   factory DogApiService(Dio dio) = _DogApiService;
 
-  @GET('/image/search')
+  @GET('/images/search')
   Future<HttpResponse<List<DogModel>>> getNewDogs({
     @Query("limit") String? limit,
     @Query("api_key") String? apiKey,
