@@ -19,12 +19,13 @@ class RemoteDogsBloc extends Bloc<RemoteDogsEvent, RemoteDogsState> {
   }
 
   Future<void> onGetDogs(GetDogs event, Emitter<RemoteDogsState> emit) async {
+    log("Bloc/onGetDogs triggered");
     final dataState = await _getDogsUseCase();
     if (dataState is DataSuccess && dataState.data!.isNotEmpty) {
       dogs.addAll(dataState.data!);
-      emit(RemoteDogsDone(dogs));
+      emit(RemoteDogsDone(dogs: dogs));
     }
-    if (dataState is DataFailed && dataState.data!.isNotEmpty) {
+    if (dataState is DataFailed) {
       log(dataState.error!.toString());
       emit(RemoteDogsError(dataState.error!));
     }
@@ -32,9 +33,16 @@ class RemoteDogsBloc extends Bloc<RemoteDogsEvent, RemoteDogsState> {
 
   Future<void> onGetMoreDogs(
       GetMoreDogs event, Emitter<RemoteDogsState> emit) async {
-    emit(const RemoteDogsLoading());
-    if (event.index == dogs.length - loadTriggerIndex) {
-      add(const GetDogs());
+    log("Bloc/onGetMoreDogs triggered");
+    emit(RemoteDogsDone(dogs: dogs, loadingMore: RemoteLoadingMore()));
+    final dataState = await _getDogsUseCase();
+    if (dataState is DataSuccess && dataState.data!.isNotEmpty) {
+      dogs.addAll(dataState.data!);
+      emit(RemoteDogsDone(dogs: dogs));
+    }
+    if (dataState is DataFailed) {
+      emit(RemoteDogsDone(
+          dogs: dogs, loadMoreError: RemoteLoadMoreError(dataState.error)));
     }
   }
 }

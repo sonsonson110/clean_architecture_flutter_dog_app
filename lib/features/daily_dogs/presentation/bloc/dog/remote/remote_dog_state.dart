@@ -5,11 +5,14 @@ import 'package:equatable/equatable.dart';
 abstract class RemoteDogsState extends Equatable {
   final List<DogEntity>? dogs;
   final DioError? error;
+  final RemoteLoadingMore? loadingMore;
+  final RemoteLoadMoreError? loadMoreError;
 
-  const RemoteDogsState({this.dogs, this.error});
+  const RemoteDogsState(
+      {this.dogs, this.error, this.loadingMore, this.loadMoreError});
 
   @override
-  List<Object?> get props => [dogs!, error!];
+  List<Object?> get props => [dogs, error, loadMoreError, loadingMore];
 }
 
 // states of ui
@@ -18,9 +21,20 @@ class RemoteDogsLoading extends RemoteDogsState {
 }
 
 class RemoteDogsDone extends RemoteDogsState {
-  const RemoteDogsDone(List<DogEntity> dogs) : super(dogs: dogs);
+  const RemoteDogsDone({
+    required super.dogs,
+    super.loadingMore,
+    super.loadMoreError,
+  });
 }
 
 class RemoteDogsError extends RemoteDogsState {
   const RemoteDogsError(DioError error) : super(error: error);
+}
+
+class RemoteLoadingMore {}
+
+class RemoteLoadMoreError {
+  final DioError? error;
+  const RemoteLoadMoreError(this.error);
 }

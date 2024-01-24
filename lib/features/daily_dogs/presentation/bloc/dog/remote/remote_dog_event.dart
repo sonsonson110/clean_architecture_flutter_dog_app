@@ -9,6 +9,5 @@ class GetDogs extends RemoteDogsEvent {
 
 // get extra dogs
 class GetMoreDogs extends RemoteDogsEvent {
-  int index;
-  GetMoreDogs({required this.index});
+  GetMoreDogs();
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:clean_architecture_dog_app/features/daily_dogs/presentation/bloc/dog/remote/remote_dog_bloc.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/presentation/bloc/dog/remote/remote_dog_event.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/presentation/bloc/dog/remote/remote_dog_state.dart';
@@ -35,17 +37,31 @@ class DailyDogs extends StatelessWidget {
         return const Center(child: Icon(Icons.refresh));
       }
       if (state is RemoteDogsDone) {
-        return ListView.builder(
-          itemBuilder: (context, index) {
-            if (index == bloc.dogs.length - bloc.loadTriggerIndex) {
-              bloc.add(GetMoreDogs(index: index));
+        return NotificationListener<ScrollEndNotification>(
+          onNotification: (scrollInfo) {
+            if (scrollInfo.metrics.pixels ==
+                    scrollInfo.metrics.maxScrollExtent &&
+                state.loadingMore == null) {
+              bloc.add(GetMoreDogs());
             }
-            return GestureDetector(
-              child: Image.network(bloc.dogs[index].url!),
-              onTap: () {/**TODO: Implement route */},
-            );
+            return true;
           },
-          itemCount: bloc.dogs.length,
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                    itemCount: bloc.dogs.length,
+                    itemBuilder: (context, index) {
+                      return Image.network(bloc.dogs[index].url!);
+                    }),
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              if (state.error != null) Text(state.error!.message),
+              if (state.loadingMore != null) const CupertinoActivityIndicator(),
+            ],
+          ),
         );
       }
       return const SizedBox();
