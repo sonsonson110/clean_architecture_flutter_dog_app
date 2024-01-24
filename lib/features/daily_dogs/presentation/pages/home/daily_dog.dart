@@ -1,8 +1,8 @@
 import 'package:clean_architecture_dog_app/features/daily_dogs/presentation/bloc/dog/remote/remote_dog_bloc.dart';
+import 'package:clean_architecture_dog_app/features/daily_dogs/presentation/bloc/dog/remote/remote_dog_event.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/presentation/bloc/dog/remote/remote_dog_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DailyDogs extends StatelessWidget {
@@ -12,7 +12,7 @@ class DailyDogs extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppbar(),
-      body: _buildBody(),
+      body: _buildBody(context),
     );
   }
 
@@ -22,7 +22,8 @@ class DailyDogs extends StatelessWidget {
     );
   }
 
-  _buildBody() {
+  _buildBody(BuildContext context) {
+    final bloc = BlocProvider.of<RemoteDogsBloc>(context);
     return BlocBuilder<RemoteDogsBloc, RemoteDogsState>(
         builder: (context, state) {
       if (state is RemoteDogsLoading) {
@@ -36,14 +37,15 @@ class DailyDogs extends StatelessWidget {
       if (state is RemoteDogsDone) {
         return ListView.builder(
           itemBuilder: (context, index) {
-            return Column(
-              children: [
-                Image.network(state.dogs![index].url!),
-                Text(state.dogs![index].toString())
-              ],
+            if (index == bloc.dogs.length - bloc.loadTriggerIndex) {
+              bloc.add(GetMoreDogs(index: index));
+            }
+            return GestureDetector(
+              child: Image.network(bloc.dogs[index].url!),
+              onTap: () {/**TODO: Implement route */},
             );
           },
-          itemCount: state.dogs!.length,
+          itemCount: bloc.dogs.length,
         );
       }
       return const SizedBox();

@@ -1,4 +1,6 @@
+import 'package:clean_architecture_dog_app/core/constants/constants.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/data/models/mesurement.dart';
+import 'package:clean_architecture_dog_app/features/daily_dogs/domain/entities/breed.dart';
 
 class BreedModel {
   MeasurementModel? weight;
@@ -42,6 +44,20 @@ class BreedModel {
         referenceImageId: json['reference_image_id']);
   }
 
+  factory BreedModel.fromBreedEntity(BreedEntity breedEntity) {
+    return BreedModel(
+      weight: MeasurementModel.fromMeasurementEntity(breedEntity.weight),
+      height: MeasurementModel.fromMeasurementEntity(breedEntity.height),
+      id: breedEntity.id,
+      name: breedEntity.name,
+      bredFor: breedEntity.bredFor,
+      breedGroup: breedEntity.breedGroup,
+      lifeSpan: breedEntity.lifeSpan,
+      temperament: breedEntity.temperament,
+      origin: breedEntity.origin,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     if (weight != null) {
@@ -58,6 +74,27 @@ class BreedModel {
     data['temperament'] = temperament;
     data['origin'] = origin;
     data['reference_image_id'] = referenceImageId;
+    return data;
+  }
+
+  Map<String, dynamic> toDbBreedMap() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (weight != null) {
+      data[BreedTable.weightInMetric] = weight!.metric;
+      data[BreedTable.weightInImperial] = weight!.imperial;
+    }
+    if (height != null) {
+      data[BreedTable.heightInMetric] = height!.metric;
+      data[BreedTable.heightInImperial] = height!.imperial;
+    }
+    data[BreedTable.id] = id;
+    data[BreedTable.name] = name;
+    data[BreedTable.breedFor] = bredFor;
+    data[BreedTable.breedGroup] = breedGroup;
+    data[BreedTable.lifeSpan] = lifeSpan;
+    data[BreedTable.temperament] = temperament;
+    data[BreedTable.origin] = origin;
+    // data['reference_image_id'] = referenceImageId;
     return data;
   }
 }

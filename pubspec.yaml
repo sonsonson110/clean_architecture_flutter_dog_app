@@ -48,19 +48,21 @@ dependencies:
   # date format
   intl: ^0.18.1
 
-  # database
-  floor: ^1.4.2
-
   # make request to api
   retrofit: ^3.0.1
+  dio: ^4.0.6
+  html: ^0.15.4
 
   # hooks
   flutter_hooks: ^0.18.3
 
   # cached image
   cached_network_image: ^3.2.0
-  dio: ^4.0.6
-  html: ^0.15.4
+
+  # local database
+  sqflite: ^2.3.0
+  path_provider: ^2.1.2
+  path: ^1.8.3
 
 dev_dependencies:
   flutter_test:
@@ -73,7 +75,6 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^3.0.1
   retrofit_generator: ^4.2.0
-  floor_generator: ^1.4.0
   build_runner: ^2.1.2
 
 # For information on the generic Dart part of this file, see the
