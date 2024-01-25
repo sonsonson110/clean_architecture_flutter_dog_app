@@ -15,7 +15,7 @@ class DogDao {
 
   static const qBreedId = 'breed_id';
   static const qBreedName = 'breed_name';
-  static const qBreedFor = 'breed_for';
+  static const qBredFor = 'bred_for';
   static const qBreedGroup = 'breed_group';
   static const qLifeSpan = 'life_span';
   static const qTemperament = 'temperament';
@@ -27,27 +27,27 @@ class DogDao {
 
   final String _selectAllDogsQuery = '''
     SELECT
-      ${DogTable.tableName}.${DogTable.id} AS ${qDogId},
-      ${DogTable.tableName}.${DogTable.url} AS ${qDogUrl},
-      ${DogTable.tableName}.${DogTable.width} AS ${qDogWidth},
-      ${DogTable.tableName}.${DogTable.height} AS ${qDogHeight},
+      ${DogTable.tableName}.${DogTable.id} AS $qDogId,
+      ${DogTable.tableName}.${DogTable.url} AS $qDogUrl,
+      ${DogTable.tableName}.${DogTable.width} AS $qDogWidth,
+      ${DogTable.tableName}.${DogTable.height} AS $qDogHeight,
 
-      ${BreedTable.tableName}.${BreedTable.id} AS ${qBreedId},
-      ${BreedTable.tableName}.${BreedTable.name} AS ${qBreedName},
-      ${BreedTable.tableName}.${BreedTable.breedFor} AS ${qBreedFor},
-      ${BreedTable.tableName}.${BreedTable.breedGroup} AS ${qBreedGroup},
-      ${BreedTable.tableName}.${BreedTable.lifeSpan} AS ${qLifeSpan},
-      ${BreedTable.tableName}.${BreedTable.temperament} AS ${qTemperament},
-      ${BreedTable.tableName}.${BreedTable.origin} AS ${qOrigin},
-      ${BreedTable.tableName}.${BreedTable.weightInMetric} AS ${qWeightInMetric},
-      ${BreedTable.tableName}.${BreedTable.weightInImperial} AS ${qWeightInImperial},
-      ${BreedTable.tableName}.${BreedTable.heightInMetric} AS ${qHeightInMetric},
-      ${BreedTable.tableName}.${BreedTable.heightInImperial} AS ${qHeightInImperial}
+      ${BreedTable.tableName}.${BreedTable.id} AS $qBreedId,
+      ${BreedTable.tableName}.${BreedTable.name} AS $qBreedName,
+      ${BreedTable.tableName}.${BreedTable.bredFor} AS $qBredFor,
+      ${BreedTable.tableName}.${BreedTable.breedGroup} AS $qBreedGroup,
+      ${BreedTable.tableName}.${BreedTable.lifeSpan} AS $qLifeSpan,
+      ${BreedTable.tableName}.${BreedTable.temperament} AS $qTemperament,
+      ${BreedTable.tableName}.${BreedTable.origin} AS $qOrigin,
+      ${BreedTable.tableName}.${BreedTable.weightInMetric} AS $qWeightInMetric,
+      ${BreedTable.tableName}.${BreedTable.weightInImperial} AS $qWeightInImperial,
+      ${BreedTable.tableName}.${BreedTable.heightInMetric} AS $qHeightInMetric,
+      ${BreedTable.tableName}.${BreedTable.heightInImperial} AS $qHeightInImperial
     FROM
       ${DogTable.tableName}
-    LEFT OUTER JOIN
+    LEFT JOIN
       ${DogBreedTable.tableName} ON ${DogTable.tableName}.${DogTable.id} = ${DogBreedTable.tableName}.${DogBreedTable.dogId}
-    LEFT OUTER JOIN
+    LEFT JOIN
       ${BreedTable.tableName} ON ${DogBreedTable.tableName}.${DogBreedTable.breedId} = ${BreedTable.tableName}.${BreedTable.id};
   ''';
 
@@ -59,30 +59,22 @@ class DogDao {
     for (final curRecord in result) {
       final lastDog = dogList.isEmpty ? null : dogList[dogList.length - 1];
       if (lastDog == null || curRecord[qDogId] != lastDog.id) {
-        dogList.add(DogModel.fromJson(curRecord));
+        dogList.add(DogModel.fromDbMap(curRecord));
       } else {
-        lastDog.breeds!.add(BreedModel(
-          id: curRecord[qBreedId],
-          name: curRecord[qBreedName],
-          bredFor: curRecord[qBreedFor],
-          breedGroup: curRecord[qBreedGroup],
-          lifeSpan: curRecord[qLifeSpan],
-          temperament: curRecord[qTemperament],
-          origin: curRecord[qOrigin],
-        ));
+        lastDog.breeds!.add(BreedModel.fromDbMap(curRecord));
       }
     }
     return dogList;
   }
 
-  Future<bool> saveDog(DogModel dogModel) async {
+  Future<void> saveDog(DogModel dogModel) async {
     final db = await _databaseHelper.database;
     // insert dog table
     var dogResult = await db.insert(DogTable.tableName, dogModel.toDbDogMap(),
         conflictAlgorithm: ConflictAlgorithm.abort);
     if (dogResult == 0) throw Exception("Dog table insert failed");
     // insert breed table
-    if (dogModel.breeds == null) return true;
+    if (dogModel.breeds == null) return;
     for (final breed in dogModel.breeds!) {
       var breedResult = await db.insert(
           BreedTable.tableName, breed.toDbBreedMap(),
@@ -96,6 +88,16 @@ class DogDao {
       });
       if (dogBreedResult == 0) throw Exception("Dog breed table insert failed");
     }
-    return true;
+  }
+
+  Future<void> deleteDog(DogModel dogModel) async {
+    final db = await _databaseHelper.database;
+
+    var dogResult = await db.delete(DogTable.tableName, where: '${DogTable.id} = ?', whereArgs: [dogModel.id]);
+    if (dogResult != 1) throw Exception("Dao/deleteDog: dog ${dogModel.id} failed");
+    for (final breed in dogModel.breeds!) {
+      var breedResult = await db.delete(BreedTable.tableName, where: '${BreedTable.id} = ?', whereArgs: [breed.id]);
+      if (breedResult != 1) throw Exception("Dao/deleteDog: breed ${dogModel.id} failed");
+    }
   }
 }

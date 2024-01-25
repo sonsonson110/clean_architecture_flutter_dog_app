@@ -1,4 +1,5 @@
 import 'package:clean_architecture_dog_app/core/constants/constants.dart';
+import 'package:clean_architecture_dog_app/features/daily_dogs/data/data_sources/local/dog_dao.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/data/models/mesurement.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/domain/entities/breed.dart';
 
@@ -58,6 +59,20 @@ class BreedModel {
     );
   }
 
+  factory BreedModel.fromDbMap(Map<String, dynamic> map) {
+    return BreedModel(
+      id: map[DogDao.qBreedId],
+      name: map[DogDao.qBreedName],
+      bredFor: map[DogDao.qBredFor],
+      breedGroup: map[DogDao.qBreedGroup],
+      lifeSpan: map[DogDao.qLifeSpan],
+      temperament: map[DogDao.qTemperament],
+      origin: map[DogDao.qOrigin],
+      weight: MeasurementModel.fromDbMap(map, true),
+      height: MeasurementModel.fromDbMap(map, false),
+    );
+  }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     if (weight != null) {
@@ -89,7 +104,7 @@ class BreedModel {
     }
     data[BreedTable.id] = id;
     data[BreedTable.name] = name;
-    data[BreedTable.breedFor] = bredFor;
+    data[BreedTable.bredFor] = bredFor;
     data[BreedTable.breedGroup] = breedGroup;
     data[BreedTable.lifeSpan] = lifeSpan;
     data[BreedTable.temperament] = temperament;

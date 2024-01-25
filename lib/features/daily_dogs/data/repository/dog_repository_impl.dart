@@ -38,9 +38,8 @@ class DogRepositoryImpl implements DogRepository {
   }
 
   @override
-  Future<bool> deleteDog(DogEntity dogEntity) {
-    // TODO: implement deleteDog
-    throw UnimplementedError();
+  Future<void> deleteDog(DogEntity dogEntity) {
+    return _dogDao.deleteDog(DogModel.fromDogEntity(dogEntity));
   }
 
   @override
@@ -50,7 +49,7 @@ class DogRepositoryImpl implements DogRepository {
   }
 
   @override
-  Future<bool> saveDog(DogEntity dogEntity) {
+  Future<void> saveDog(DogEntity dogEntity) {
     return _dogDao.saveDog(DogModel.fromDogEntity(dogEntity));
   }
 }

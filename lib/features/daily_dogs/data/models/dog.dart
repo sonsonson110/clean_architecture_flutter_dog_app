@@ -1,4 +1,5 @@
 import 'package:clean_architecture_dog_app/core/constants/constants.dart';
+import 'package:clean_architecture_dog_app/features/daily_dogs/data/data_sources/local/dog_dao.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/data/models/breed.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/domain/entities/dog.dart';
 
@@ -38,6 +39,16 @@ class DogModel {
       url: dogEntity.url,
       width: dogEntity.width,
       height: dogEntity.height,
+    );
+  }
+
+  factory DogModel.fromDbMap(Map<String, dynamic> map) {
+    return DogModel(
+      id: map[DogDao.qDogId],
+      url: map[DogDao.qDogUrl],
+      width: map[DogDao.qDogWidth],
+      height: map[DogDao.qDogHeight],
+      breeds: [BreedModel.fromDbMap(map)],
     );
   }
 

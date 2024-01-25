@@ -18,3 +18,8 @@ class GetSavedDogs extends LocalDogsEvent {
 class SaveDog extends LocalDogsEvent {
   const SaveDog(DogEntity dogEntity) : super(dogEntity: dogEntity);
 }
+
+// delete a dog
+class DeleteDog extends LocalDogsEvent {
+  const DeleteDog(DogEntity dogEntity): super(dogEntity: dogEntity);
+}

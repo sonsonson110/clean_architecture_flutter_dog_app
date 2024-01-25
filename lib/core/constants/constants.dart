@@ -20,7 +20,7 @@ class BreedTable {
   static const String tableName = 'breed';
   static const String id = 'id';
   static const String name = 'name';
-  static const String breedFor = 'bred_for';
+  static const String bredFor = 'bred_for';
   static const String breedGroup = 'breed_group';
   static const String lifeSpan = 'life_span';
   static const String temperament = 'temperament';

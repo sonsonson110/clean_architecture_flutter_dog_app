@@ -3,6 +3,7 @@ import 'package:clean_architecture_dog_app/features/daily_dogs/data/data_sources
 import 'package:clean_architecture_dog_app/features/daily_dogs/data/data_sources/remote/dog_api_service.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/data/repository/dog_repository_impl.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/domain/repository/dog_repository.dart';
+import 'package:clean_architecture_dog_app/features/daily_dogs/domain/usecases/delete_dog.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/domain/usecases/get_dogs.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/domain/usecases/get_saved_dogs.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/domain/usecases/save_dog.dart';
@@ -35,8 +36,10 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<SaveDogUseCase>(SaveDogUseCase(sl()));
 
+  sl.registerSingleton<DeleteDogUseCase>(DeleteDogUseCase(sl()));
+
   // Blocs shouldn't be registed as singleton
   sl.registerFactory<RemoteDogsBloc>(() => RemoteDogsBloc(sl()));
 
-  sl.registerFactory<LocalDogBloc>(() => LocalDogBloc(sl(), sl()));
+  sl.registerFactory<LocalDogBloc>(() => LocalDogBloc(sl(), sl(), sl()));
 }

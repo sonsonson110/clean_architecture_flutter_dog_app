@@ -45,16 +45,10 @@ dependencies:
   # service locator
   get_it: ^7.6.0
 
-  # date format
-  intl: ^0.18.1
-
   # make request to api
   retrofit: ^3.0.1
   dio: ^4.0.6
   html: ^0.15.4
-
-  # hooks
-  flutter_hooks: ^0.18.3
 
   # cached image
   cached_network_image: ^3.2.0

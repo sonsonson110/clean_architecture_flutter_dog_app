@@ -8,7 +8,7 @@ abstract class DogRepository {
   // database methods
   Future<List<DogEntity>> getSavedDogs();
 
-  Future<bool> saveDog(DogEntity dogEntity);
+  Future<void> saveDog(DogEntity dogEntity);
 
-  Future<bool> deleteDog(DogEntity dogEntity);
+  Future<void> deleteDog(DogEntity dogEntity);
 }

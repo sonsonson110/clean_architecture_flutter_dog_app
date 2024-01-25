@@ -1,3 +1,4 @@
+import 'package:clean_architecture_dog_app/features/daily_dogs/data/data_sources/local/dog_dao.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/domain/entities/measurement.dart';
 
 class MeasurementModel {
@@ -15,6 +16,13 @@ class MeasurementModel {
     return MeasurementModel(
         imperial: measurementEntity?.imperial,
         metric: measurementEntity?.metric);
+  }
+
+  factory MeasurementModel.fromDbMap(Map<String, dynamic> map, bool weight) {
+    return MeasurementModel(
+      imperial: map[weight ? DogDao.qWeightInImperial : DogDao.qHeightInImperial],
+      metric: map[weight ? DogDao.qWeightInMetric : DogDao.qHeightInMetric],
+    );
   }
 
   Map<String, dynamic> toJson() {

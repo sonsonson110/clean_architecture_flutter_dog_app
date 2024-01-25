@@ -19,7 +19,7 @@ class DatabaseHelper {
     CREATE TABLE ${BreedTable.tableName} (
       ${BreedTable.id} INTEGER PRIMARY KEY,
       ${BreedTable.name} TEXT,
-      ${BreedTable.breedFor} TEXT,
+      ${BreedTable.bredFor} TEXT,
       ${BreedTable.breedGroup} TEXT,
       ${BreedTable.lifeSpan} TEXT,
       ${BreedTable.temperament} TEXT,
@@ -36,8 +36,8 @@ class DatabaseHelper {
       ${DogBreedTable.dogId} TEXT,
       ${DogBreedTable.breedId} INTEGER,
       PRIMARY KEY (${DogBreedTable.dogId}, ${DogBreedTable.breedId}),
-      FOREIGN KEY (${DogBreedTable.dogId}) REFERENCES ${DogTable.tableName} (${DogTable.id}) ON DELETE SET NULL,
-      FOREIGN KEY (${DogBreedTable.breedId}) REFERENCES ${BreedTable.tableName} (${BreedTable.id}) ON DELETE SET NULL
+      FOREIGN KEY (${DogBreedTable.dogId}) REFERENCES ${DogTable.tableName} (${DogTable.id}) ON DELETE CASCADE,
+      FOREIGN KEY (${DogBreedTable.breedId}) REFERENCES ${BreedTable.tableName} (${BreedTable.id}) ON DELETE CASCADE
     );
   ''';
 
@@ -55,7 +55,7 @@ class DatabaseHelper {
     Directory documentDirectory = await getApplicationDocumentsDirectory();
     String dbPath = join(documentDirectory.path, databaseName);
     // create the database
-    var database = await openDatabase(dbPath, version: 1, onCreate: _onCreate);
+    var database = await openDatabase(dbPath, version: 1, onCreate: _onCreate, onOpen: _onOpen);
     return database;
   }
 
@@ -63,5 +63,9 @@ class DatabaseHelper {
     await db.execute(createDogTable);
     await db.execute(createBreedTable);
     await db.execute(createDogBreedTable);
+  }
+
+  FutureOr<void> _onOpen(Database db) async {
+    await db.execute("PRAGMA foreign_keys=ON");
   }
 }

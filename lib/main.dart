@@ -1,3 +1,4 @@
+import 'package:clean_architecture_dog_app/config/routes/routes.dart';
 import 'package:clean_architecture_dog_app/core/features/injection_container.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/presentation/bloc/dog/remote/remote_dog_bloc.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/presentation/bloc/dog/remote/remote_dog_event.dart';
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
       create: (context) => sl()..add(const GetDogs()),
       child: const MaterialApp(
         home: DailyDogs(),
+        onGenerateRoute: AppRoutes.onGenerateRoutes,
       ),
     );
   }

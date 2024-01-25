@@ -1,5 +1,5 @@
-import 'dart:developer';
-
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:clean_architecture_dog_app/features/daily_dogs/domain/entities/dog.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/presentation/bloc/dog/remote/remote_dog_bloc.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/presentation/bloc/dog/remote/remote_dog_event.dart';
 import 'package:clean_architecture_dog_app/features/daily_dogs/presentation/bloc/dog/remote/remote_dog_state.dart';
@@ -13,14 +13,20 @@ class DailyDogs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppbar(),
+      appBar: _buildAppbar(context),
       body: _buildBody(context),
     );
   }
 
-  _buildAppbar() {
+  _buildAppbar(BuildContext context) {
     return AppBar(
       title: const Text("Daily dogs"),
+      actions: [
+        GestureDetector(
+          child: const Icon(Icons.bookmark),
+          onTap: () => _navigateToSavedDogs(context),
+        )
+      ],
     );
   }
 
@@ -50,13 +56,14 @@ class DailyDogs extends StatelessWidget {
             children: [
               Expanded(
                 child: ListView.builder(
-                    itemCount: bloc.dogs.length,
+                    itemCount: state.dogs!.length,
                     itemBuilder: (context, index) {
-                      return Image.network(bloc.dogs[index].url!);
+                      return GestureDetector(
+                          onTap: () => _navigateToDogDetails(
+                              context, state.dogs![index]),
+                          child: CachedNetworkImage(
+                              imageUrl: state.dogs![index].url!));
                     }),
-              ),
-              const SizedBox(
-                height: 8,
               ),
               if (state.error != null) Text(state.error!.message),
               if (state.loadingMore != null) const CupertinoActivityIndicator(),
@@ -66,5 +73,13 @@ class DailyDogs extends StatelessWidget {
       }
       return const SizedBox();
     });
+  }
+
+  void _navigateToDogDetails(BuildContext context, DogEntity dogEntity) {
+    Navigator.pushNamed(context, '/DogDetails', arguments: dogEntity);
+  }
+
+  void _navigateToSavedDogs(BuildContext context) {
+    Navigator.pushNamed(context, '/SavedDogs');
   }
 }
